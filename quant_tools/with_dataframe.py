@@ -25,7 +25,7 @@ def get_volatility_from_returns(df:pd.DataFrame) -> pd.Series:
      - assets/stocks as columns
      - returns as values
     Output: Pandas Series
-     - assets/stocks as columns
+     - assets/stocks as index
      - standard deviation/volatility as values (not in %)
     '''
     return df.std()
@@ -38,7 +38,7 @@ def get_annualized_volatility_from_returns(df:pd.DataFrame) -> pd.Series:
      - assets/stocks as columns
      - returns as values
     Output: Pandas Series
-     - assets/stocks as columns
+     - assets/stocks as index
      - annualized volatility as values (not in %)
     '''
     return df.std()*np.sqrt(MONTHS_PER_YEAR)
@@ -51,7 +51,7 @@ def get_compound_return_from_returns(df:pd.DataFrame) -> pd.Series:
      - assets/stocks as columns
      - returns as values
     Output: Pandas Series
-     - assets/stocks as columns
+     - assets/stocks as index
      - compund returns as values (not in %)
     '''
     return (df + 1).prod() - 1
@@ -64,7 +64,7 @@ def get_annualized_return_from_returns(df:pd.DataFrame) -> pd.Series:
      - assets/stocks as columns
      - returns as values
     Output: Pandas Series
-     - assets/stocks as columns
+     - assets/stocks as index
      - annualized returns as values (not in %)
     '''
     number_of_periods = df.shape[0]
@@ -82,8 +82,7 @@ def get_wealth_index_from_returns(df:pd.DataFrame, amount:float=1000.0) -> pd.Da
      - assets/stocks as columns
      - wealth index as values
     '''
-    df = amount * (df + 1)
-    return df.cumprod()
+    return amount * (df + 1).cumprod()
 
 def get_previous_peaks_from_wealth_index(df:pd.DataFrame) -> pd.DataFrame:
     '''Get previous peaks from wealth index
@@ -123,6 +122,8 @@ def get_max_drawdown_from_returns(df:pd.DataFrame, amount:float=1000.0) -> pd.Da
      - assets/stocks as columns
      - returns as values
     Output: Pandas DataFrame
+    - assets/stocks as index
+    - date & max drawdown as columns
     '''
     drawdown = get_drawdown_from_returns(df, amount)
     return pd.DataFrame({'Date': drawdown.idxmin(), 'Maximum Drawdown': drawdown.min()})
